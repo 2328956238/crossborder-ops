@@ -1,0 +1,19 @@
+{
+  "name": "order_spike",
+  "description": "订单突增：充电器最近 2 天新增 24 单",
+  "source": "synthetic",
+  "overrides": {
+    "orders_append": [
+      {
+        "shop_id": "S1",
+        "asin": "B0TEST0002",
+        "sku": "SKU-CHARGER-65W",
+        "quantity": 2,
+        "count": 12,
+        "status": "Pending",
+        "days_ago": 0
+      }
+    ]
+  },
+  "expected": {}
+}

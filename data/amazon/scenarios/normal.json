@@ -1,0 +1,7 @@
+{
+  "name": "normal",
+  "description": "正常销售场景",
+  "source": "synthetic",
+  "overrides": {},
+  "expected": {}
+}

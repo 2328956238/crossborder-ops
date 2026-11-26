@@ -1,0 +1,28 @@
+{
+  "name": "cost_increase",
+  "description": "成本上涨：手机壳成本 6.20 → 15.00，利润转负",
+  "source": "synthetic",
+  "overrides": {
+    "pricing": [
+      {
+        "shop_id": "S1",
+        "asin": "B0TEST0001",
+        "price": 19.99,
+        "competitor_price": 21.5,
+        "is_buybox": true,
+        "unit_cost": 15.0,
+        "commission_rate": 0.15,
+        "shipping_fee": 2.8,
+        "packaging_cost": 0.4,
+        "target_margin": 0.25,
+        "min_price": 15.0,
+        "max_price": 27.0,
+        "currency": "USD",
+        "updated_at": "2026-01-10T09:00:00+00:00",
+        "source": "synthetic",
+        "fee_source": "synthetic_assumption（非 Amazon 真实费率）"
+      }
+    ]
+  },
+  "expected": {}
+}

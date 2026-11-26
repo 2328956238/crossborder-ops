@@ -1,0 +1,30 @@
+{
+  "name": "bad_listing",
+  "description": "Listing 质量问题：标题过短、无 bullet、无图片",
+  "source": "synthetic",
+  "overrides": {
+    "products": [
+      {
+        "shop_id": "S1",
+        "asin": "B0TEST0001",
+        "sku": "SKU-CASE-001",
+        "title": "Case",
+        "brand": "AcmeGear",
+        "category": "Electronics > Phone Accessories",
+        "price": 19.99,
+        "description": "",
+        "bullets": [],
+        "images": [],
+        "attributes": {
+          "brand": "AcmeGear",
+          "color": "Matte Black",
+          "material": "Silicone"
+        },
+        "listing_status": "suppressed",
+        "product_type": "PRODUCT",
+        "status": "suppressed"
+      }
+    ]
+  },
+  "expected": {}
+}

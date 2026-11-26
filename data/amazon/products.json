@@ -1,0 +1,165 @@
+{
+  "meta": {
+    "source": "synthetic",
+    "data_kind": "本地模拟业务数据",
+    "declaration": "非真实卖家数据、非官方 Sandbox 返回、非实时库存；仅用于演示与测试",
+    "field_mapping": "Catalog/Listings 简化视图",
+    "currency": "USD",
+    "timezone": "UTC",
+    "reference_date": "2026-01-10"
+  },
+  "items": [
+    {
+      "shop_id": "S1",
+      "asin": "B0TEST0001",
+      "sku": "SKU-CASE-001",
+      "title": "Silicone Phone Case for iPhone 15 (Matte Black)",
+      "brand": "AcmeGear",
+      "category": "Electronics > Phone Accessories",
+      "price": 19.99,
+      "description": "Slim shockproof case with matte finish, raised bezel and precise cutouts.",
+      "bullets": [
+        "Slim 1.2mm profile, pocket friendly",
+        "Shockproof corners with 2m drop protection",
+        "Raised bezel protects camera and screen",
+        "Precise cutouts for buttons and ports",
+        "Matte anti-fingerprint coating"
+      ],
+      "images": [
+        "https://cdn.example.com/B0TEST0001/main.jpg",
+        "https://cdn.example.com/B0TEST0001/back.jpg"
+      ],
+      "attributes": {
+        "brand": "AcmeGear",
+        "color": "Matte Black",
+        "material": "Silicone"
+      },
+      "listing_status": "active",
+      "product_type": "PRODUCT",
+      "currency": "USD",
+      "status": "active",
+      "source": "synthetic"
+    },
+    {
+      "shop_id": "S1",
+      "asin": "B0TEST0002",
+      "sku": "SKU-CHARGER-65W",
+      "title": "65W USB-C GaN Fast Charger 2-Port Compact Travel",
+      "brand": "AcmeGear",
+      "category": "Electronics > Chargers",
+      "price": 39.99,
+      "description": "Dual-port GaN charger with PD 3.0, foldable plug and 2m cable included.",
+      "bullets": [
+        "65W total output, PD 3.0 fast charging",
+        "GaN technology, 40% smaller",
+        "Two ports share power intelligently",
+        "Foldable plug for travel",
+        "Includes 2m USB-C cable"
+      ],
+      "images": [
+        "https://cdn.example.com/B0TEST0002/main.jpg",
+        "https://cdn.example.com/B0TEST0002/ports.jpg"
+      ],
+      "attributes": {
+        "brand": "AcmeGear",
+        "color": "White",
+        "material": "GaN"
+      },
+      "listing_status": "active",
+      "product_type": "PRODUCT",
+      "currency": "USD",
+      "status": "active",
+      "source": "synthetic"
+    },
+    {
+      "shop_id": "S1",
+      "asin": "B0TEST0003",
+      "sku": "SKU-PAD-15W",
+      "title": "15W Wireless Charging Pad with USB-C Cable",
+      "brand": "AcmeGear",
+      "category": "Electronics > Chargers",
+      "price": 24.5,
+      "description": "Qi-certified 15W wireless charging pad with anti-slip surface.",
+      "bullets": [
+        "15W fast wireless charging",
+        "Qi certified for iPhone and Android",
+        "Anti-slip silicone surface",
+        "Includes 1m USB-C cable",
+        "Over-temperature protection"
+      ],
+      "images": [
+        "https://cdn.example.com/B0TEST0003/main.jpg"
+      ],
+      "attributes": {
+        "brand": "AcmeGear",
+        "color": "Black",
+        "material": "ABS"
+      },
+      "listing_status": "active",
+      "product_type": "PRODUCT",
+      "currency": "USD",
+      "status": "active",
+      "source": "synthetic"
+    },
+    {
+      "shop_id": "S2",
+      "asin": "B0TEST0101",
+      "sku": "SKU-HUB-7IN1",
+      "title": "USB-C Hub 7-in-1 with HDMI 4K and 100W PD",
+      "brand": "OtherBrand",
+      "category": "Electronics > Hubs",
+      "price": 29.99,
+      "description": "7-in-1 USB-C hub: HDMI 4K, three USB 3.0 ports, SD, microSD and 100W PD.",
+      "bullets": [
+        "4K HDMI output",
+        "Three USB 3.0 ports",
+        "SD and microSD readers",
+        "100W power delivery pass-through",
+        "Aluminum housing"
+      ],
+      "images": [
+        "https://cdn.example.com/B0TEST0101/main.jpg"
+      ],
+      "attributes": {
+        "brand": "OtherBrand",
+        "color": "Silver",
+        "material": "Aluminum"
+      },
+      "listing_status": "active",
+      "product_type": "PRODUCT",
+      "currency": "USD",
+      "status": "active",
+      "source": "synthetic"
+    },
+    {
+      "shop_id": "S2",
+      "asin": "B0TEST0102",
+      "sku": "SKU-CABLE-2M",
+      "title": "USB-C to USB-C Cable 2m 100W Braided",
+      "brand": "OtherBrand",
+      "category": "Electronics > Cables",
+      "price": 9.99,
+      "description": "Braided USB-C cable supporting 100W charging and 480Mbps data.",
+      "bullets": [
+        "100W charging",
+        "480Mbps data",
+        "Braided nylon jacket",
+        "2 meter length",
+        "Reversible connector"
+      ],
+      "images": [
+        "https://cdn.example.com/B0TEST0102/main.jpg"
+      ],
+      "attributes": {
+        "brand": "OtherBrand",
+        "color": "Grey",
+        "material": "Nylon"
+      },
+      "listing_status": "active",
+      "product_type": "PRODUCT",
+      "currency": "USD",
+      "status": "active",
+      "source": "synthetic"
+    }
+  ]
+}

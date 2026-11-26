@@ -1,0 +1,76 @@
+{
+  "meta": {
+    "api": "Reports API",
+    "version": "2021-06-30",
+    "sandbox_type": "static",
+    "source_model_url": "https://github.com/amzn/selling-partner-api-models/blob/main/models/reports-api-model/reports_2021-06-30.json",
+    "extraction": "x-amzn-api-sandbox.static 抽取（官方公开示例）",
+    "is_real_seller_data": false,
+    "note": "官方 Swagger 模型里的公开 Sandbox 示例，不是真实卖家数据，也不能当生产数据",
+    "retrieved_at": "2026-11-25"
+  },
+  "samples": [
+    {
+      "operation_path": "/paths//reports/2021-06-30/reports/get/responses/200",
+      "request": {
+        "parameters": {
+          "reportTypes": {
+            "value": [
+              "FEE_DISCOUNTS_REPORT",
+              "GET_AFN_INVENTORY_DATA"
+            ]
+          },
+          "processingStatuses": {
+            "value": [
+              "IN_QUEUE",
+              "IN_PROGRESS"
+            ]
+          }
+        }
+      },
+      "response": {
+        "nextToken": "VGhpcyB0b2tlbiBpcyBvcGFxdWUgYW5kIGludGVudGlvbmFsbHkgb2JmdXNjYXRlZA==",
+        "reports": [
+          {
+            "reportId": "ReportId1",
+            "reportType": "FEE_DISCOUNTS_REPORT",
+            "dataStartTime": "2024-03-11T13:47:20.677Z",
+            "dataEndTime": "2024-03-12T13:47:20.677Z",
+            "createdTime": "2024-03-10T13:47:20.677Z",
+            "processingStatus": "IN_PROGRESS",
+            "processingStartTime": "2024-03-10T13:47:20.677Z",
+            "processingEndTime": "2024-03-12T13:47:20.677Z"
+          }
+        ]
+      }
+    },
+    {
+      "operation_path": "/paths//reports/2021-06-30/reports/get/responses/400",
+      "request": {
+        "parameters": {
+          "reportTypes": {
+            "value": [
+              "FEE_DISCOUNTS_REPORT",
+              "GET_AFN_INVENTORY_DATA"
+            ]
+          },
+          "processingStatuses": {
+            "value": [
+              "BAD_VALUE",
+              "IN_PROGRESS"
+            ]
+          }
+        }
+      },
+      "response": {
+        "errors": [
+          {
+            "code": "400",
+            "message": "Invalid input",
+            "details": "Invalid input in processing status"
+          }
+        ]
+      }
+    }
+  ]
+}

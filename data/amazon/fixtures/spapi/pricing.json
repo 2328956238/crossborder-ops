@@ -1,0 +1,256 @@
+{
+  "meta": {
+    "api": "Product Pricing API",
+    "version": "2022-05-01",
+    "sandbox_type": "static",
+    "source_model_url": "https://github.com/amzn/selling-partner-api-models/blob/main/models/product-pricing-api-model/productPricing_2022-05-01.json",
+    "extraction": "x-amzn-api-sandbox.static 抽取（官方公开示例）",
+    "is_real_seller_data": false,
+    "note": "官方 Swagger 模型里的公开 Sandbox 示例，不是真实卖家数据，也不能当生产数据",
+    "retrieved_at": "2026-11-25"
+  },
+  "samples": [
+    {
+      "operation_path": "/paths//batches/products/pricing/2022-05-01/offer/featuredOfferExpectedPrice/post/responses/200",
+      "request": {
+        "parameters": {
+          "body": {
+            "value": {
+              "requests": [
+                {
+                  "marketplaceId": "MARKETPLACE_ID",
+                  "sku": "MY_SKU",
+                  "segment": {
+                    "segmentDetails": {
+                      "sampleLocation": {
+                        "postalCode": {
+                          "countryCode": "COUNTRY_CODE",
+                          "value": "POSTAL_CODE_VALUE"
+                        }
+                      }
+                    }
+                  },
+                  "method": "GET",
+                  "uri": "/products/pricing/2022-05-01/offer/featuredOfferExpectedPrice"
+                },
+                {
+                  "marketplaceId": "MARKETPLACE_ID",
+                  "sku": "MY_UNIQUE_SKU",
+                  "method": "GET",
+                  "uri": "/products/pricing/2022-05-01/offer/featuredOfferExpectedPrice"
+                },
+                {
+                  "marketplaceId": "MARKETPLACE_ID",
+                  "sku": "INVALID_SKU",
+                  "method": "GET",
+                  "uri": "/products/pricing/2022-05-01/offer/featuredOfferExpectedPrice"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "response": {
+        "responses": [
+          {
+            "request": {
+              "marketplaceId": "MARKETPLACE_ID",
+              "sku": "MY_SKU",
+              "segment": {
+                "segmentDetails": {
+                  "sampleLocation": {
+                    "postalCode": {
+                      "countryCode": "COUNTRY_CODE",
+                      "value": "POSTAL_CODE_VALUE"
+                    }
+                  }
+                }
+              }
+            },
+            "status": {
+              "statusCode": 200,
+              "reasonPhrase": "Success"
+            },
+            "headers": {},
+            "body": {
+              "offerIdentifier": {
+                "asin": "ASIN",
+                "sku": "MY_SKU",
+                "marketplaceId": "MARKETPLACE_ID",
+                "fulfillmentType": "AFN",
+                "sellerId": "MY_SELLER_ID"
+              },
+              "featuredOfferExpectedPriceResults": [
+                {
+                  "featuredOfferExpectedPrice": {
+                    "listingPrice": {
+                      "amount": 10.0,
+                      "currencyCode": "USD"
+                    },
+                    "points": {
+                      "pointsNumber": 3,
+                      "pointsMonetaryValue": {
+                        "amount": 0.03,
+                        "currencyCode": "USD"
+                      }
+                    }
+                  },
+                  "resultStatus": "VALID_FOEP",
+                  "competingFeaturedOffer": {
+                    "offerIdentifier": {
+                      "asin": "ASIN",
+                      "marketplaceId": "MARKETPLACE_ID",
+                      "fulfillmentType": "AFN",
+                      "sellerId": "OTHER_SELLER_ID"
+                    },
+                    "condition": "New",
+                    "price": {
+                      "listingPrice": {
+                        "amount": 12.0,
+                        "currencyCode": "USD"
+                      },
+                      "shippingPrice": {
+                        "amount": 0,
+                        "currencyCode": "USD"
+                      },
+                      "points": {
+                        "pointsNumber": 3,
+                        "pointsMonetaryValue": {
+                          "amount": 0.03,
+                          "currencyCode": "USD"
+                        }
+                      }
+                    }
+                  },
+                  "currentFeaturedOffer": {
+                    "offerIdentifier": {
+                      "asin": "ASIN",
+                      "marketplaceId": "MARKETPLACE_ID",
+                      "fulfillmentType": "AFN",
+                      "sellerId": "OTHER_SELLER_ID"
+                    },
+                    "condition": "New",
+                    "price": {
+                      "listingPrice": {
+                        "amount": 12.0,
+                        "currencyCode": "USD"
+                      },
+                      "shippingPrice": {
+                        "amount": 0,
+                        "currencyCode": "USD"
+                      },
+                      "points": {
+                        "pointsNumber": 3,
+                        "pointsMonetaryValue": {
+                          "amount": 0.03,
+                          "currencyCode": "USD"
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "request": {
+              "marketplaceId": "MARKETPLACE_ID",
+              "sku": "MY_UNIQUE_SKU"
+            },
+            "status": {
+              "statusCode": 200,
+              "reasonPhrase": "Success"
+            },
+            "headers": {},
+            "body": {
+              "offerIdentifier": {
+                "asin": "ASIN",
+                "sku": "MY_UNIQUE_SKU",
+                "marketplaceId": "MARKETPLACE_ID",
+                "fulfillmentType": "AFN",
+                "sellerId": "MY_SELLER_ID"
+              },
+              "featuredOfferExpectedPriceResults": [
+                {
+                  "resultStatus": "NO_COMPETING_OFFERS",
+                  "currentFeaturedOffer": {
+                    "offerIdentifier": {
+                      "asin": "ASIN",
+                      "marketplaceId": "MARKETPLACE_ID",
+                      "fulfillmentType": "AFN",
+                      "sellerId": "MY_SELLER_ID"
+                    },
+                    "condition": "New",
+                    "price": {
+                      "listingPrice": {
+                        "amount": 12.0,
+                        "currencyCode": "USD"
+                      },
+                      "shippingPrice": {
+                        "amount": 0,
+                        "currencyCode": "USD"
+                      },
+                      "points": {
+                        "pointsNumber": 3,
+                        "pointsMonetaryValue": {
+                          "amount": 0.03,
+                          "currencyCode": "USD"
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "request": {
+              "marketplaceId": "MARKETPLACE_ID",
+              "sku": "MY_NONEXISTENT_SKU"
+            },
+            "status": {
+              "statusCode": 400,
+              "reasonPhrase": "Client Error"
+            },
+            "headers": {},
+            "body": {
+              "errors": [
+                {
+                  "code": "INVALID_SKU",
+                  "message": "The requested SKU does not exist for the seller in the requested Amazon store."
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "operation_path": "/paths//batches/products/pricing/2022-05-01/offer/featuredOfferExpectedPrice/post/responses/400",
+      "request": {
+        "parameters": {
+          "body": {
+            "value": {
+              "requests": [
+                {
+                  "marketplaceId": "MARKETPLACE_ID",
+                  "sku": "INVALID_SKU",
+                  "method": "GET",
+                  "uri": "/products/pricing/2022-05-01/offer/featuredOfferExpectedPrice"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "response": {
+        "errors": [
+          {
+            "code": "INVALID_SKU",
+            "message": "The requested SKU does not exist for the seller in the requested Amazon store."
+          }
+        ]
+      }
+    }
+  ]
+}

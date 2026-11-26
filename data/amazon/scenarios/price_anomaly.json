@@ -1,0 +1,28 @@
+{
+  "name": "price_anomaly",
+  "description": "价格异常：无线充 2.50 远低于竞品",
+  "source": "synthetic",
+  "overrides": {
+    "pricing": [
+      {
+        "shop_id": "S1",
+        "asin": "B0TEST0003",
+        "price": 2.5,
+        "competitor_price": 24.99,
+        "is_buybox": true,
+        "unit_cost": 8.0,
+        "commission_rate": 0.15,
+        "shipping_fee": 3.0,
+        "packaging_cost": 0.4,
+        "target_margin": 0.3,
+        "min_price": 20.0,
+        "max_price": 32.0,
+        "currency": "USD",
+        "updated_at": "2026-01-10T09:00:00+00:00",
+        "source": "synthetic",
+        "fee_source": "synthetic_assumption（非 Amazon 真实费率）"
+      }
+    ]
+  },
+  "expected": {}
+}

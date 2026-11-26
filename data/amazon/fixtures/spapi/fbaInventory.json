@@ -1,0 +1,14 @@
+{
+  "meta": {
+    "api": "FBA Inventory API",
+    "version": "v1",
+    "sandbox_type": "dynamic-only",
+    "source_model_url": "https://github.com/amzn/selling-partner-api-models/blob/main/models/fba-inventory-api-model/fbaInventory.json",
+    "extraction": "该 API 无 static 示例（官方标记 dynamic）",
+    "is_real_seller_data": false,
+    "note": "官方 Swagger 模型里的公开 Sandbox 示例，不是真实卖家数据，也不能当生产数据",
+    "retrieved_at": "2026-11-25"
+  },
+  "samples": [],
+  "schema_derived_example": null
+}

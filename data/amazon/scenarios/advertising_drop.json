@@ -1,0 +1,25 @@
+{
+  "name": "advertising_drop",
+  "description": "广告花费上升但销售额下降",
+  "source": "synthetic",
+  "overrides": {
+    "advertising": [
+      {
+        "shop_id": "S1",
+        "asin": "B0TEST0002",
+        "campaign": "SP-CHARGER-EXACT",
+        "keyword": "65w gan charger",
+        "impressions": 2600,
+        "clicks": 130,
+        "orders": 2,
+        "spend": 95.0,
+        "sales": 79.98,
+        "period_days": 7,
+        "currency": "USD",
+        "end_date": "2026-01-10",
+        "source": "synthetic"
+      }
+    ]
+  },
+  "expected": {}
+}

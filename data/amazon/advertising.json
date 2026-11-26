@@ -1,0 +1,88 @@
+{
+  "meta": {
+    "source": "synthetic",
+    "data_kind": "本地模拟业务数据",
+    "declaration": "非真实卖家数据、非官方 Sandbox 返回、非实时库存；仅用于演示与测试",
+    "field_mapping": "广告报表聚合",
+    "currency": "USD",
+    "timezone": "UTC",
+    "reference_date": "2026-01-10"
+  },
+  "items": [
+    {
+      "shop_id": "S1",
+      "asin": "B0TEST0001",
+      "campaign": "SP-CASE-AUTO",
+      "keyword": "phone case iphone 15",
+      "impressions": 4200,
+      "clicks": 210,
+      "orders": 9,
+      "spend": 84.0,
+      "sales": 179.91,
+      "period_days": 7,
+      "currency": "USD",
+      "end_date": "2026-01-10",
+      "source": "synthetic"
+    },
+    {
+      "shop_id": "S1",
+      "asin": "B0TEST0002",
+      "campaign": "SP-CHARGER-EXACT",
+      "keyword": "65w gan charger",
+      "impressions": 2600,
+      "clicks": 130,
+      "orders": 6,
+      "spend": 62.4,
+      "sales": 239.94,
+      "period_days": 7,
+      "currency": "USD",
+      "end_date": "2026-01-10",
+      "source": "synthetic"
+    },
+    {
+      "shop_id": "S1",
+      "asin": "B0TEST0003",
+      "campaign": "SP-PAD-BROAD",
+      "keyword": "wireless charger pad",
+      "impressions": 3100,
+      "clicks": 90,
+      "orders": 2,
+      "spend": 55.0,
+      "sales": 49.0,
+      "period_days": 7,
+      "currency": "USD",
+      "end_date": "2026-01-10",
+      "source": "synthetic"
+    },
+    {
+      "shop_id": "S2",
+      "asin": "B0TEST0101",
+      "campaign": "SP-HUB-AUTO",
+      "keyword": "usb c hub hdmi",
+      "impressions": 1500,
+      "clicks": 60,
+      "orders": 3,
+      "spend": 21.0,
+      "sales": 89.97,
+      "period_days": 7,
+      "currency": "USD",
+      "end_date": "2026-01-10",
+      "source": "synthetic"
+    },
+    {
+      "shop_id": "S2",
+      "asin": "B0TEST0102",
+      "campaign": "SP-CABLE-EXACT",
+      "keyword": "usb c cable 2m",
+      "impressions": 900,
+      "clicks": 40,
+      "orders": 2,
+      "spend": 9.0,
+      "sales": 19.98,
+      "period_days": 7,
+      "currency": "USD",
+      "end_date": "2026-01-10",
+      "source": "synthetic"
+    }
+  ]
+}

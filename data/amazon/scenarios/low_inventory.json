@@ -1,0 +1,24 @@
+{
+  "name": "low_inventory",
+  "description": "库存不足：充电器可售仅 4 件",
+  "source": "synthetic",
+  "overrides": {
+    "inventory": [
+      {
+        "shop_id": "S1",
+        "sku": "SKU-CHARGER-65W",
+        "asin": "B0TEST0002",
+        "warehouse": "FBA-US-EAST",
+        "on_hand": 6,
+        "reserved": 2,
+        "inbound": 0,
+        "lead_time_days": 21,
+        "target_cover_days": 30,
+        "safety_stock": 15,
+        "moq": 30,
+        "available": 4
+      }
+    ]
+  },
+  "expected": {}
+}
