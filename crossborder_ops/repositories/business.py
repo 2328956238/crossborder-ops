@@ -104,3 +104,34 @@ async def low_stock(session: AsyncSession, shop_id: str) -> list[dict]:
 async def inventory_count(session: AsyncSession, shop_id: str) -> int:
     return (await session.execute(
         select(func.count()).select_from(Inventory).where(Inventory.shop_id == shop_id))).scalar_one()
+
+
+# ---------------- 商品销售排行（阶段 5） ----------------
+async def add_order_item(session: AsyncSession, shop_id: str, *, order_id: str, sku: str,
+                         quantity: int, unit_amount: Decimal,
+                         currency: str = "USD") -> "OrderItem":
+    from ..models import OrderItem
+
+    item = OrderItem(shop_id=shop_id, order_id=order_id, sku=sku, quantity=quantity,
+                     unit_amount=unit_amount, currency=currency)
+    session.add(item)
+    await session.flush()
+    return item
+
+
+async def top_products(session: AsyncSession, shop_id: str, *, start, end,
+                       limit: int = 10) -> list[dict]:
+    from ..models import Order, OrderItem
+
+    q = (select(OrderItem.sku,
+                func.sum(OrderItem.quantity).label("quantity"),
+                func.sum(OrderItem.quantity * OrderItem.unit_amount).label("revenue"))
+         .join(Order, (Order.shop_id == OrderItem.shop_id) & (Order.order_id == OrderItem.order_id))
+         .where(OrderItem.shop_id == shop_id, Order.created_at >= start,
+                Order.created_at <= end)
+         .group_by(OrderItem.sku)
+         .order_by(func.sum(OrderItem.quantity * OrderItem.unit_amount).desc())
+         .limit(limit))
+    rows = (await session.execute(q)).all()
+    return [{"sku": r[0], "quantity": int(r[1] or 0), "revenue": Decimal(str(r[2] or 0))}
+            for r in rows]

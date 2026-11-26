@@ -7,6 +7,7 @@ from decimal import Decimal
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..repositories import ads as ads_repo
+from ..core.errors import ValidationError
 from ..core.serialization import money
 from ..repositories import business as repo
 from . import advertising as advertising_service
@@ -67,3 +68,42 @@ async def multi_shop_overview(session: AsyncSession, shop_ids: list[str], date_f
 
 __all__ = ["sales_summary", "ad_summary", "inventory_warnings", "multi_shop_overview",
            "ads_repo"]
+
+
+async def top_products(session: AsyncSession, shop_id: str, date_from: date, date_to: date,
+                       limit: int = 10) -> list[dict]:
+    if limit < 1 or limit > 100:
+        raise ValidationError("limit 必须在 1..100")
+    start = datetime.combine(date_from, datetime.min.time(), tzinfo=timezone.utc)
+    end = datetime.combine(date_to, datetime.max.time(), tzinfo=timezone.utc)
+    rows = await repo.top_products(session, shop_id, start=start, end=end, limit=limit)
+    return [{"sku": r["sku"], "quantity": r["quantity"], "revenue": money(r["revenue"])}
+            for r in rows]
+
+
+async def ad_trend(session: AsyncSession, shop_id: str, date_from: date, date_to: date) -> list[dict]:
+    """按天的广告消耗/点击/转化趋势（ACOS 逐日）。"""
+    rows = await ads_repo.list_insights(session, shop_id, date_from=date_from, date_to=date_to)
+    daily: dict[str, dict] = {}
+    for row in rows:
+        key = row.date.isoformat()
+        bucket = daily.setdefault(key, {"date": key, "spend": Decimal("0"),
+                                        "revenue": Decimal("0"), "clicks": 0,
+                                        "impressions": 0, "conversions": Decimal("0")})
+        bucket["spend"] += row.spend
+        bucket["revenue"] += row.revenue
+        bucket["clicks"] += row.clicks
+        bucket["impressions"] += row.impressions
+        bucket["conversions"] += row.conversions
+    series = []
+    for key in sorted(daily):
+        bucket = daily[key]
+        acos = (bucket["spend"] / bucket["revenue"]) if bucket["revenue"] else None
+        series.append({"date": key, "spend": money(bucket["spend"]),
+                       "revenue": money(bucket["revenue"]),
+                       "clicks": bucket["clicks"], "impressions": bucket["impressions"],
+                       "acos": None if acos is None else round(float(acos), 6)})
+    return series
+
+
+__all__ += ["top_products", "ad_trend"]

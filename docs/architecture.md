@@ -83,7 +83,7 @@ PENDING_APPROVAL ──approve──▶ APPROVED ──execute──▶ EXECUTIN
 
 - 生产 PostgreSQL 16（asyncpg）；测试 SQLite（aiosqlite，NullPool + WAL）；
 - 迁移：`alembic upgrade head` 从空库建全部表，含索引与唯一约束；
-- 表：`shops`、`platform_event`、`orders`、`sync_cursor`、`inventory`、`ad_report`、`operation`、`operation_audit`。
+- 表：`shops`、`platform_event`、`orders`、`order_items`、`sync_cursor`、`inventory`、`products`、`ad_report`、`ad_accounts/campaigns/sets/ads/insights`、`ad_reviews`、`risk_events`、`alerts`、`shop_credentials`、`operation`、`operation_audit`。
 
 ## 8. 阶段 1 的已知边界（阶段 2+ 处理）
 

@@ -89,7 +89,7 @@ alembic revision --autogenerate -m "..."   # 新增迁移
 | GET/PUT/POST | `/api/v1/inventory`、`/api/v1/inventory/low-stock`、`/api/v1/inventory/{sku}/adjust` | 库存 |
 | GET/POST | `/api/v1/advertising/{accounts,campaigns,adsets,ads,insights,metrics}` | 广告域 |
 | GET/POST | `/api/v1/ad-shield/{risks,alerts,reviews,patrol}`、`/risks/{id}/ack`、`/risks/{id}/resolve` | 广告盾（patrol 仅 admin） |
-| GET | `/api/v1/reports/{sales,ads,inventory-warnings,overview}` | 经营报表 |
+| GET | `/api/v1/reports/{sales,ads,ads/trend,top-products,inventory-warnings,overview}` | 经营报表（日期区间 + shop 隔离） |
 | GET/POST | `/api/v1/meta/{status,oauth/authorize-url,oauth/exchange,accounts,sync}` | Meta 集成（Mock-first） |
 
 认证：`Authorization: Bearer <token>`，token → `{shop_id, actor, role}` 由服务端映射；
@@ -117,6 +117,18 @@ pytest -q
 - ✅ 阶段 2：七个业务模块（shops/products/orders/inventory/advertising/ad_shield/reports）+ 外键/索引/唯一约束
 - ✅ 阶段 3：Meta Marketing API 集成（OAuth / 账户 / Campaign / AdSet / Ad / Insights + Mock，分页/限流/退避/幂等）
 - ✅ 阶段 4：广告盾（定时巡检 / 审核状态采集 / 异常规则 / 告警通知 / 状态流转）
-- ⬜ 阶段 5：经营报表（销售额 / 订单 / 排行 / 库存预警 / 广告指标 / 多店铺汇总）
+- ✅ 阶段 5：经营报表（销售额 / 订单 / 商品排行 / 库存预警 / 广告指标与趋势 / 多店铺汇总）
 
-详细说明见 `docs/architecture.md` 与 `docs/phase1-report.md`。
+### 文档
+
+| 文档 | 内容 |
+|---|---|
+| `docs/architecture.md` | 分层架构、租户隔离、审批状态机、事件同步、已知边界 |
+| `docs/api.md` | 全部 API 端点、认证、错误码、废弃接口 |
+| `docs/test-report.md` | 测试环境、139 个用例分布、需求对照、PostgreSQL 验证 |
+| `docs/meta-integration.md` | Meta 对接：Mock 模式、OAuth、限流退避、Token 加密、同步幂等 |
+| `docs/ad-shield-rules.md` | 广告盾规则表、阈值、去重、状态流转、不能得出的结论 |
+| `docs/phase1-report.md` ~ `docs/phase5-report.md` | 各阶段验收报告 |
+
+最终统计：`crossborder_ops/` 84 文件 / 5781 行，`tests/` 16 文件 / 1746 行，139 个测试全绿，
+5 个 Alembic 迁移在真实 PostgreSQL 16 上验证通过（20 表 / 22 外键 / 58 索引）。

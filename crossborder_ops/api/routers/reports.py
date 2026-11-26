@@ -52,3 +52,20 @@ async def overview(date_from: date = Query(...), date_to: date = Query(...),
         shop_ids = [s.strip() for s in shops.split(",") if s.strip()]
     return {"ok": True, "data": {"items": await service.multi_shop_overview(
         session, shop_ids, date_from, date_to)}}
+
+
+@router.get("/top-products")
+async def top_products(date_from: date = Query(...), date_to: date = Query(...),
+                       limit: int = Query(default=10, ge=1, le=100),
+                       session: AsyncSession = Depends(get_session),
+                       ctx: ShopContext = Depends(get_auth_context)):
+    return {"ok": True, "data": {"items": await service.top_products(
+        session, ctx.shop_id, date_from, date_to, limit)}}
+
+
+@router.get("/ads/trend")
+async def ads_trend(date_from: date = Query(...), date_to: date = Query(...),
+                    session: AsyncSession = Depends(get_session),
+                    ctx: ShopContext = Depends(get_auth_context)):
+    return {"ok": True, "data": {"items": await service.ad_trend(
+        session, ctx.shop_id, date_from, date_to)}}
