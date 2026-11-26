@@ -21,6 +21,7 @@ from .core.errors import AppError
 from .db import dispose_engine, init_models
 from .integrations.local.adapter import LocalDataAdapter, LocalDataError
 from .metrics import install_metrics
+from .workers.jobs import register as register_jobs
 from .workers.scheduler import Scheduler
 
 logger = logging.getLogger("crossborder_ops")
@@ -43,6 +44,8 @@ async def lifespan(app: FastAPI):
 
     scheduler = Scheduler(enabled=settings.scheduler_enabled)
     scheduler.start()
+    if settings.scheduler_enabled:
+        register_jobs(scheduler)
     app.state.scheduler = scheduler
 
     try:

@@ -101,7 +101,7 @@ async def test_ad_account_and_insight_idempotency(api, two_shops):
                              json={"external_id": ext, "name": "Meta 账户", "platform": "meta"})
     assert created.status_code == 201
 
-    day = "2026-03-01"
+    day = "2030-06-01"
     payload = {"level": "account", "entity_external_id": ext, "date": day,
                "impressions": 1000, "clicks": 20, "spend": 10, "conversions": 2, "revenue": 50}
     first = await api.post("/api/v1/advertising/insights", headers=auth(two_shops["S1"]),

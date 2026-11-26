@@ -127,6 +127,14 @@ async def list_insights(session: AsyncSession, shop_id: str, *, date_from: date,
 
 # ---------------- 广告盾 ----------------
 async def upsert_review(session: AsyncSession, shop_id: str, data: dict) -> AdReview:
+    existing = (await session.execute(
+        select(AdReview).where(AdReview.shop_id == shop_id,
+                               AdReview.ad_id == data["ad_id"],
+                               AdReview.fetched_at == data["fetched_at"]))).scalar_one_or_none()
+    if existing:
+        for key, value in data.items():
+            setattr(existing, key, value)
+        return existing
     row = AdReview(shop_id=shop_id, **data)
     session.add(row)
     await session.flush()

@@ -20,7 +20,8 @@ class AdReview(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     shop_id: Mapped[str] = mapped_column(String(64), ForeignKey(_SHOP_FK, ondelete="CASCADE"))
-    ad_id: Mapped[str] = mapped_column(String(36), ForeignKey("ads.id", ondelete="CASCADE"))
+    # 存 Meta 侧外部广告 id（审核快照属于外部实体，不强制本地 ads 行存在）
+    ad_id: Mapped[str] = mapped_column(String(64), nullable=False)
     status: Mapped[str] = mapped_column(String(24), nullable=False)
     reason_code: Mapped[str | None] = mapped_column(String(64), nullable=True)
     reason_text: Mapped[str | None] = mapped_column(Text, nullable=True)

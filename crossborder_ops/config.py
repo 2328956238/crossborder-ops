@@ -54,6 +54,14 @@ class Settings(BaseSettings):
     token_encryption_key: str = Field(default="", repr=False)
     meta_timeout_seconds: float = 15.0
     meta_max_retries: int = 3
+    # 广告盾
+    ad_shield_spend_drop_ratio: float = 0.3
+    ad_shield_ctr_drop_ratio: float = 0.5
+    ad_shield_cvr_drop_ratio: float = 0.5
+    ad_shield_cpa_spike_ratio: float = 2.0
+    # 告警通知：log / webhook
+    notify_channel: str = "log"
+    notify_webhook_url: str = ""
 
     # ---- 本地合成数据 ----
     local_data_dir: str = str(PROJECT_ROOT / "data" / "amazon")

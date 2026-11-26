@@ -88,7 +88,7 @@ alembic revision --autogenerate -m "..."   # 新增迁移
 | GET | `/api/v1/orders`、`/api/v1/orders/stats`、`/api/v1/orders/{id}` | 订单 |
 | GET/PUT/POST | `/api/v1/inventory`、`/api/v1/inventory/low-stock`、`/api/v1/inventory/{sku}/adjust` | 库存 |
 | GET/POST | `/api/v1/advertising/{accounts,campaigns,adsets,ads,insights,metrics}` | 广告域 |
-| GET/POST | `/api/v1/ad-shield/{risks,alerts}`、`/risks/{id}/ack`、`/risks/{id}/resolve` | 广告盾 |
+| GET/POST | `/api/v1/ad-shield/{risks,alerts,reviews,patrol}`、`/risks/{id}/ack`、`/risks/{id}/resolve` | 广告盾（patrol 仅 admin） |
 | GET | `/api/v1/reports/{sales,ads,inventory-warnings,overview}` | 经营报表 |
 | GET/POST | `/api/v1/meta/{status,oauth/authorize-url,oauth/exchange,accounts,sync}` | Meta 集成（Mock-first） |
 
@@ -116,7 +116,7 @@ pytest -q
 - ✅ 阶段 1：复制清理 + 分层骨架 + PostgreSQL + Alembic + 审批/审计独立业务能力
 - ✅ 阶段 2：七个业务模块（shops/products/orders/inventory/advertising/ad_shield/reports）+ 外键/索引/唯一约束
 - ✅ 阶段 3：Meta Marketing API 集成（OAuth / 账户 / Campaign / AdSet / Ad / Insights + Mock，分页/限流/退避/幂等）
-- ⬜ 阶段 4：广告盾（巡检 / 审核状态 / 风险规则 / 告警）
+- ✅ 阶段 4：广告盾（定时巡检 / 审核状态采集 / 异常规则 / 告警通知 / 状态流转）
 - ⬜ 阶段 5：经营报表（销售额 / 订单 / 排行 / 库存预警 / 广告指标 / 多店铺汇总）
 
 详细说明见 `docs/architecture.md` 与 `docs/phase1-report.md`。

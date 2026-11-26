@@ -55,7 +55,15 @@ class MockMetaClient:
             return [{"id": "adset_mock_1", "name": "Mock AdSet 1", "status": "ACTIVE",
                      "daily_budget": "300"}]
         if path.endswith("/ads"):
-            return [{"id": "ad_mock_1", "name": "Mock Ad 1", "status": "ACTIVE"}]
+            return [
+                {"id": "ad_mock_1", "name": "Mock Ad 1", "status": "ACTIVE",
+                 "effective_status": "ACTIVE", "issues_info": []},
+                {"id": "ad_mock_2", "name": "Mock Ad 2", "status": "PAUSED",
+                 "effective_status": "DISAPPROVED",
+                 "issues_info": [{"error_code": "1885183", "error_summary": "广告被拒审"}]},
+                {"id": "ad_mock_3", "name": "Mock Ad 3", "status": "PAUSED",
+                 "effective_status": "WITH_ISSUES", "issues_info": []},
+            ]
         if path.endswith("/insights"):
             base = date(2026, 3, 1)
             return [{"date_start": (base + timedelta(days=i)).isoformat(),
