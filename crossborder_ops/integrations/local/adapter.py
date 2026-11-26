@@ -4,7 +4,7 @@
 - 这是 **synthetic（合成）数据源**，用于演示与测试，**不是** Amazon 真实数据，
   也不是 SP-API Sandbox 返回（Sandbox 示例单独放在 data/amazon/fixtures/spapi/）；
 - 只读：本模块不提供任何写方法，不需要审批；
-- 数据加载与过滤逻辑全部在这里，**不允许写进 LangGraph 节点**。
+- 数据加载与过滤逻辑全部在这里，**不允许写进 API / 业务服务层**。
 
 错误约定（LocalDataError.code）：
 - file_missing      数据文件不存在
