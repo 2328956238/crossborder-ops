@@ -18,10 +18,65 @@ async def list_accounts(session: AsyncSession, shop_id: str) -> list[AdAccount]:
 
 
 async def create_account(session: AsyncSession, shop_id: str, **kwargs) -> AdAccount:
+    kwargs.setdefault("id", str(uuid.uuid4()))
     account = AdAccount(shop_id=shop_id, **kwargs)
     session.add(account)
     await session.flush()
     return account
+
+
+async def upsert_account(session: AsyncSession, shop_id: str, data: dict):
+    existing = (await session.execute(
+        select(AdAccount).where(AdAccount.shop_id == shop_id,
+                                AdAccount.platform == data.get("platform", "meta"),
+                                AdAccount.external_id == data["external_id"]))).scalar_one_or_none()
+    if existing:
+        for key, value in data.items():
+            setattr(existing, key, value)
+        return existing
+    return await create_account(session, shop_id, **data)
+
+
+async def upsert_campaign(session: AsyncSession, shop_id: str, account_id: str, data: dict):
+    existing = (await session.execute(
+        select(AdCampaign).where(AdCampaign.account_id == account_id,
+                                 AdCampaign.external_id == data["external_id"]))).scalar_one_or_none()
+    if existing:
+        for key, value in data.items():
+            setattr(existing, key, value)
+        return existing
+    campaign = AdCampaign(id=str(uuid.uuid4()), shop_id=shop_id, account_id=account_id, **data)
+    session.add(campaign)
+    await session.flush()
+    return campaign
+
+
+async def upsert_adset(session: AsyncSession, shop_id: str, campaign_id: str, data: dict):
+    existing = (await session.execute(
+        select(AdSet).where(AdSet.campaign_id == campaign_id,
+                            AdSet.external_id == data["external_id"]))).scalar_one_or_none()
+    if existing:
+        for key, value in data.items():
+            setattr(existing, key, value)
+        return existing
+    row = AdSet(id=str(uuid.uuid4()), shop_id=shop_id, campaign_id=campaign_id, **data)
+    session.add(row)
+    await session.flush()
+    return row
+
+
+async def upsert_ad(session: AsyncSession, shop_id: str, adset_id: str, data: dict):
+    existing = (await session.execute(
+        select(Ad).where(Ad.adset_id == adset_id,
+                         Ad.external_id == data["external_id"]))).scalar_one_or_none()
+    if existing:
+        for key, value in data.items():
+            setattr(existing, key, value)
+        return existing
+    row = Ad(id=str(uuid.uuid4()), shop_id=shop_id, adset_id=adset_id, **data)
+    session.add(row)
+    await session.flush()
+    return row
 
 
 async def list_campaigns(session: AsyncSession, shop_id: str, limit: int = 100) -> list[AdCampaign]:

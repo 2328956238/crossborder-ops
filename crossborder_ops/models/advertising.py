@@ -94,5 +94,6 @@ class AdInsight(Base):
     conversions: Mapped[Decimal] = mapped_column(Numeric(18, 4), default=Decimal("0"),
                                                  nullable=False)
     revenue: Mapped[Decimal] = mapped_column(Numeric(18, 4), default=Decimal("0"), nullable=False)
+    source: Mapped[str] = mapped_column(String(8), default="meta", nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False)

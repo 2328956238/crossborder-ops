@@ -1,16 +1,34 @@
-"""Meta（Facebook）Marketing API 集成包 —— 阶段 3 实现。
+"""Meta 集成入口：按配置构建真实客户端或 Mock（绝不静默假装真实成功）。"""
+from __future__ import annotations
 
-规划模块：
-    client.py      HTTP 客户端：限流、Retry-After、指数退避、超时与异常分类
-    oauth.py       OAuth 授权码换 token、刷新、加密存储
-    accounts.py    广告账户查询
-    campaigns.py   Campaign 查询
-    adsets.py      AdSet 查询
-    ads.py         Ad 查询
-    insights.py    Insights 分时段同步（分页 + 幂等写入）
-    mock.py        无真实凭证时的 Mock Adapter（绝不伪造真实调用成功）
+from ...config import get_settings
+from .client import MetaClient
+from .errors import MetaConfigError
+from .mock import MockMetaClient
 
-约束：
-- access_token 只进加密存储/内存，不写日志；
-- 无凭证时 meta_mock=True，客户端返回明确的 mock 标记，不假装成功。
-"""
+
+def build_meta_client(access_token: str | None = None):
+    settings = get_settings()
+    token = access_token or settings.meta_access_token
+    if settings.meta_mock:
+        return MockMetaClient()
+    if not token:
+        raise MetaConfigError("META_MOCK=false 但未提供 access_token")
+    return MetaClient(token)
+
+
+def meta_status() -> dict:
+    settings = get_settings()
+    return {
+        "mock": settings.meta_mock,
+        "source": "mock" if settings.meta_mock else "meta",
+        "has_app_id": bool(settings.meta_app_id),
+        "has_app_secret": bool(settings.meta_app_secret),
+        "graph_url": settings.meta_graph_url,
+        "api_version": settings.meta_api_version,
+        "note": ("未配置真实凭证，所有数据为 Mock" if settings.meta_mock
+                 else "真实 Meta API 模式"),
+    }
+
+
+__all__ = ["build_meta_client", "meta_status", "MetaClient", "MockMetaClient"]

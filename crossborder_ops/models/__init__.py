@@ -6,12 +6,13 @@ from .business import AdReport, Inventory
 from .products import Product
 from .advertising import Ad, AdAccount, AdCampaign, AdInsight, AdSet
 from .ad_shield import AdReview, Alert, RiskEvent
+from .credentials import ShopCredential
 from .approval import Operation, OperationAudit
 
 __all__ = [
     "Base", "CreatedAtMixin",
     "Shop", "PlatformEvent", "Order", "SyncCursor", "Inventory", "AdReport", "Product",
     "AdAccount", "AdCampaign", "AdSet", "Ad", "AdInsight",
-    "AdReview", "RiskEvent", "Alert",
+    "AdReview", "RiskEvent", "Alert", "ShopCredential",
     "Operation", "OperationAudit",
 ]

@@ -15,6 +15,12 @@ REQUEST_LATENCY = Histogram(
     buckets=(0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5))
 SYNC_EVENTS = Counter(
     "crossborder_sync_events_total", "webhook 事件处理数", ["result"])
+META_REQUESTS = Counter(
+    "crossborder_meta_requests_total", "Meta API 请求数", ["method", "outcome"])
+META_THROTTLED = Counter(
+    "crossborder_meta_throttled_total", "Meta API 限流次数")
+META_SYNC_ROWS = Counter(
+    "crossborder_meta_sync_rows_total", "Meta 同步写入行数", ["entity", "source"])
 
 
 def install_metrics(app: FastAPI) -> None:

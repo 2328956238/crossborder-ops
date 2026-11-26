@@ -14,7 +14,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from . import __version__
-from .api.routers import (ad_shield, advertising, amazon, health, inventory, operations,
+from .api.routers import (ad_shield, advertising, amazon, health, inventory, meta, operations,
                           orders, products, reports, shops, webhooks)
 from .config import get_settings
 from .core.errors import AppError
@@ -69,6 +69,7 @@ def create_app() -> FastAPI:
     app.include_router(advertising.router)
     app.include_router(ad_shield.router)
     app.include_router(reports.router)
+    app.include_router(meta.router)
 
     @app.exception_handler(AppError)
     async def app_error_handler(request: Request, exc: AppError):

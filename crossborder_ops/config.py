@@ -50,6 +50,10 @@ class Settings(BaseSettings):
     meta_api_version: str = "v21.0"
     meta_access_token: str = Field(default="", repr=False)
     meta_mock: bool = True               # 无真实凭证时必须走 Mock
+    # token 加密 key（Fernet base64）；生产必填
+    token_encryption_key: str = Field(default="", repr=False)
+    meta_timeout_seconds: float = 15.0
+    meta_max_retries: int = 3
 
     # ---- 本地合成数据 ----
     local_data_dir: str = str(PROJECT_ROOT / "data" / "amazon")
