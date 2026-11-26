@@ -160,15 +160,18 @@ async def test_meta_sync_is_idempotent_and_marked_mock(api, two_shops, sessionma
     from crossborder_ops.services import meta_sync
     from crossborder_ops.repositories import ads as ads_repo
 
+    from crossborder_ops.core.security import ShopContext
+
     client = build_meta_client(None)
+    ctx = ShopContext(shop_id="S1", actor="tester", role="operator", token_id="test")
     async with sessionmaker_() as session:
         async with session.begin():
-            first = await meta_sync.sync_all(session, "S1", client,
+            first = await meta_sync.sync_all(session, ctx, client,
                                              since=__import__("datetime").date(2026, 3, 1),
                                              until=__import__("datetime").date(2026, 3, 3))
     async with sessionmaker_() as session:
         async with session.begin():
-            second = await meta_sync.sync_all(session, "S1", client,
+            second = await meta_sync.sync_all(session, ctx, client,
                                               since=__import__("datetime").date(2026, 3, 1),
                                               until=__import__("datetime").date(2026, 3, 3))
     assert first == second

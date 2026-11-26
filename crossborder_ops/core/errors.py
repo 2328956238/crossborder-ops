@@ -41,5 +41,9 @@ class DataUnavailableError(AppError):
 class ApprovalError(AppError):
     """审批/执行状态机错误（沿用源仓库错误码，便于 API 映射）。"""
 
+    _STATUS = {"not_found": 404, "forbidden_shop": 403, "invalid_arg": 422,
+               "unknown_action": 422}
+
     def __init__(self, code: str, message: str = ""):
         super().__init__(message or code, code=code)
+        self.status_code = self._STATUS.get(code, 400)

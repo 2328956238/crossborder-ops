@@ -6,6 +6,8 @@ import uuid
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..core.errors import ConflictError, NotFoundError, ValidationError
+from ..core.permissions import ensure_role
+from ..core.security import ShopContext
 from ..core.serialization import money
 from ..repositories import business as repo
 
@@ -27,7 +29,9 @@ async def get_product(session: AsyncSession, shop_id: str, sku: str) -> dict:
             "status": product.status, "price": money(product.price), "currency": product.currency}
 
 
-async def create_product(session: AsyncSession, shop_id: str, payload) -> dict:
+async def create_product(session: AsyncSession, ctx: ShopContext, payload) -> dict:
+    ensure_role(ctx, "operator", "admin")
+    shop_id = ctx.shop_id
     if await repo.get_product(session, shop_id, payload.sku) is not None:
         raise ConflictError(f"商品已存在: {payload.sku}")
     product = await repo.create_product(
@@ -37,7 +41,9 @@ async def create_product(session: AsyncSession, shop_id: str, payload) -> dict:
             "status": product.status, "price": money(product.price), "currency": product.currency}
 
 
-async def update_product(session: AsyncSession, shop_id: str, sku: str, payload) -> dict:
+async def update_product(session: AsyncSession, ctx: ShopContext, sku: str, payload) -> dict:
+    ensure_role(ctx, "operator", "admin")
+    shop_id = ctx.shop_id
     product = await repo.get_product(session, shop_id, sku)
     if product is None:
         raise NotFoundError(f"商品不存在: {sku}")

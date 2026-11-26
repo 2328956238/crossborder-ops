@@ -70,10 +70,11 @@ def two_shops(monkeypatch):
         "tok_s1": {"shop_id": "S1", "actor": "ops_s1", "role": "admin"},
         "tok_s2": {"shop_id": "S2", "actor": "ops_s2", "role": "admin"},
         "tok_viewer": {"shop_id": "S1", "actor": "viewer", "role": "viewer"},
+        "tok_op": {"shop_id": "S1", "actor": "op_s1", "role": "operator"},
     }))
     get_settings.cache_clear()
     try:
-        yield {"S1": "tok_s1", "S2": "tok_s2", "viewer": "tok_viewer"}
+        yield {"S1": "tok_s1", "S2": "tok_s2", "viewer": "tok_viewer", "operator": "tok_op"}
     finally:
         get_settings.cache_clear()
 

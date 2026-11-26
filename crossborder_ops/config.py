@@ -41,6 +41,7 @@ class Settings(BaseSettings):
     # ---- 平台 webhook ----
     webhook_secret: str = Field(default="", repr=False)   # 阶段 2 接入 HMAC 验签
     webhook_allowed_shops: str = ""                        # 逗号分隔的店铺白名单
+    webhook_max_skew_seconds: int = 300                    # 时间戳允许偏差（防重放）
 
     # ---- Meta Marketing API ----
     meta_app_id: str = ""

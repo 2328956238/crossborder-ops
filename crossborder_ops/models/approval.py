@@ -37,6 +37,7 @@ class Operation(Base):
     status: Mapped[str] = mapped_column(String(24), nullable=False)
     idempotency_key: Mapped[str] = mapped_column(String(120), nullable=False)
     created_by: Mapped[str] = mapped_column(String(64), nullable=False)
+    reason: Mapped[str | None] = mapped_column(Text, nullable=True)
     approved_by: Mapped[str | None] = mapped_column(String(64), nullable=True)
     error_code: Mapped[str | None] = mapped_column(String(64), nullable=True)
     created_at: Mapped[datetime] = mapped_column(

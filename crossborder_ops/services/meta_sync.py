@@ -8,6 +8,8 @@ from decimal import Decimal
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .. import metrics
+from ..core.permissions import ensure_role
+from ..core.security import ShopContext
 from ..integrations.meta import accounts as meta_accounts
 from ..integrations.meta import ads as meta_ads
 from ..integrations.meta import adsets as meta_adsets
@@ -100,8 +102,10 @@ async def sync_insights(session: AsyncSession, shop_id: str, client, *,
     return count
 
 
-async def sync_all(session: AsyncSession, shop_id: str, client, *,
+async def sync_all(session: AsyncSession, ctx: ShopContext, client, *,
                    since: date, until: date) -> dict:
+    ensure_role(ctx, "operator", "admin")
+    shop_id = ctx.shop_id
     accounts = await sync_accounts(session, shop_id, client)
     campaigns = await sync_campaigns(session, shop_id, client)
     adsets, ads = await sync_adsets_and_ads(session, shop_id, client)

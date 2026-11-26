@@ -11,6 +11,10 @@ from ..db import get_session, get_sessionmaker
 from ..integrations.local.adapter import LocalDataAdapter
 
 
+def get_request_id(request: Request) -> str | None:
+    return getattr(request.state, "request_id", None)
+
+
 def get_session_factory() -> async_sessionmaker[AsyncSession]:
     return get_sessionmaker()
 

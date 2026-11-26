@@ -20,6 +20,7 @@ from ..models import Operation
 from ..repositories import approval as repo
 from .executors import EXECUTORS, is_unknown_error
 
+DRAFT = "DRAFT"
 PENDING = "PENDING_APPROVAL"
 APPROVED = "APPROVED"
 EXECUTING = "EXECUTING"
@@ -38,7 +39,9 @@ SessionFactory = async_sessionmaker[AsyncSession]
 
 async def create_operation(sm: SessionFactory, *, shop_id: str, agent_type: str, action_type: str,
                            target_id: str, before: dict, after: dict, risk_level: str,
-                           created_by: str, idempotency_key: str) -> tuple[dict, bool]:
+                           created_by: str, idempotency_key: str,
+                           status: str = PENDING, reason: str | None = None,
+                           session: AsyncSession | None = None) -> tuple[dict, bool]:
     """创建待审批操作；同店同幂等键重复请求返回已有操作。"""
     if action_type not in EXECUTORS:
         raise ApprovalError("unknown_action", f"未登记的操作类型: {action_type}")
@@ -49,22 +52,27 @@ async def create_operation(sm: SessionFactory, *, shop_id: str, agent_type: str,
     if not idempotency_key:
         raise ApprovalError("invalid_arg", "idempotency_key 不能为空")
 
-    async with sm() as session, session.begin():
-        existing = await repo.get_by_idempotency(session, shop_id, idempotency_key)
+    async def _create(sess: AsyncSession) -> tuple[dict, bool]:
+        existing = await repo.get_by_idempotency(sess, shop_id, idempotency_key)
         if existing:
             return repo.to_dict(existing), False
         op = Operation(
             id=str(uuid.uuid4()), shop_id=shop_id, agent_type=agent_type,
             action_type=action_type, target_id=target_id,
             before_snapshot=before, after_snapshot=after,
-            risk_level=risk_level, status=PENDING, idempotency_key=idempotency_key,
+            risk_level=risk_level, status=status, idempotency_key=idempotency_key,
             created_by=created_by, approved_by=None, error_code=None,
-            updated_at=repo.now_iso(),
+            reason=reason, updated_at=repo.now_iso(),
         )
-        session.add(op)
-        repo.add_audit(session, op.id, "create", created_by, "ok",
-                       f"{action_type} target={target_id} risk={risk_level}")
+        sess.add(op)
+        repo.add_audit(sess, op.id, "create", created_by, "ok",
+                       f"{action_type} target={target_id} risk={risk_level} status={status}")
         return repo.to_dict(op), True
+
+    if session is not None:
+        return await _create(session)
+    async with sm() as owned, owned.begin():
+        return await _create(owned)
 
 
 async def _load(sm: SessionFactory, op_id: str, shop_id: str | None = None) -> Operation:
@@ -76,6 +84,18 @@ async def _load(sm: SessionFactory, op_id: str, shop_id: str | None = None) -> O
     if shop_id is not None and op.shop_id != shop_id:
         raise ApprovalError("forbidden_shop", "操作不属于当前店铺")
     return op
+
+
+async def submit_operation(sm: SessionFactory, op_id: str, *, shop_id: str,
+                           actor: str) -> str:
+    """提交审批：DRAFT → PENDING。只能提交本店操作。"""
+    op = await _load(sm, op_id, shop_id)
+    if op.status != DRAFT:
+        return "conflict"
+    async with sm() as session, session.begin():
+        won = await repo.transition(session, op_id, DRAFT, PENDING)
+        repo.add_audit(session, op_id, "submit", actor, "ok" if won else "conflict")
+    return "submitted" if won else "conflict"
 
 
 async def approve_operation(sm: SessionFactory, op_id: str, *, shop_id: str,

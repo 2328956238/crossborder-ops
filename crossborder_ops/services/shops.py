@@ -4,6 +4,8 @@ from __future__ import annotations
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..core.errors import AppError, ConflictError, NotFoundError
+from ..core.permissions import ensure_role
+from ..core.security import ShopContext
 from ..repositories import business as repo
 
 
@@ -27,7 +29,8 @@ async def ensure_shop(session: AsyncSession, shop_id: str) -> None:
         await repo.create_shop(session, id=shop_id, name=shop_id)
 
 
-async def create_shop(session: AsyncSession, payload) -> dict:
+async def create_shop(session: AsyncSession, ctx: ShopContext, payload) -> dict:
+    ensure_role(ctx, "admin")
     if await repo.get_shop(session, payload.id) is not None:
         raise ConflictError(f"店铺已存在: {payload.id}")
     shop = await repo.create_shop(session, id=payload.id, name=payload.name,

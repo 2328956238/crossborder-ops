@@ -1,29 +1,30 @@
-"""店铺路由：列表/详情/创建（创建仅 admin）。"""
+"""店铺路由：读 viewer+；创建店铺仅 admin（并审计）。"""
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ...core import audit as audit_core
+from ...core.permissions import require_role
 from ...core.security import ShopContext
 from ...db import get_session
 from ...schemas.business import ShopCreate
 from ...services import shops as service
-from ..deps import get_auth_context
+from ..deps import get_request_id
 
 router = APIRouter(prefix="/api/v1/shops", tags=["shops"])
 
 
 @router.get("")
 async def list_shops(session: AsyncSession = Depends(get_session),
-                     ctx: ShopContext = Depends(get_auth_context)):
-    # 只返回当前 token 对应店铺，避免跨租户枚举
+                     ctx: ShopContext = Depends(require_role("viewer", "operator", "admin"))):
     current = await service.get_shop(session, ctx.shop_id)
     return {"ok": True, "data": {"items": [current], "current": ctx.shop_id}}
 
 
 @router.get("/{shop_id}")
 async def get_shop(shop_id: str, session: AsyncSession = Depends(get_session),
-                   ctx: ShopContext = Depends(get_auth_context)):
+                   ctx: ShopContext = Depends(require_role("viewer", "operator", "admin"))):
     if shop_id != ctx.shop_id:
         raise HTTPException(status_code=403, detail={"code": "forbidden_shop",
                                                      "message": "只能查看当前店铺"})
@@ -31,8 +32,12 @@ async def get_shop(shop_id: str, session: AsyncSession = Depends(get_session),
 
 
 @router.post("", status_code=201)
-async def create_shop(payload: ShopCreate, session: AsyncSession = Depends(get_session),
-                      ctx: ShopContext = Depends(get_auth_context)):
-    if ctx.role != "admin":
-        raise HTTPException(status_code=403, detail={"code": "forbidden", "message": "需要 admin"})
-    return {"ok": True, "data": await service.create_shop(session, payload)}
+async def create_shop(payload: ShopCreate, request: Request,
+                      session: AsyncSession = Depends(get_session),
+                      ctx: ShopContext = Depends(require_role("admin"))):
+    data = await service.create_shop(session, ctx, payload)
+    await audit_core.record(
+        session, shop_id=ctx.shop_id, actor=ctx.actor, role=ctx.role,
+        action="shop.create", entity_type="shop", entity_id=data["id"],
+        before=None, after=data, request_id=get_request_id(request))
+    return {"ok": True, "data": data}

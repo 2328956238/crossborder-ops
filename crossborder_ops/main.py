@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import logging
+import uuid
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Request
@@ -59,6 +60,14 @@ def create_app() -> FastAPI:
     settings = get_settings()
     app = FastAPI(title=settings.app_name, version=__version__, lifespan=lifespan)
     install_metrics(app)
+
+    @app.middleware("http")
+    async def request_id_middleware(request, call_next):
+        request_id = request.headers.get("X-Request-ID") or uuid.uuid4().hex
+        request.state.request_id = request_id
+        response = await call_next(request)
+        response.headers["X-Request-ID"] = request_id
+        return response
 
     app.include_router(health.router)
     app.include_router(webhooks.router)

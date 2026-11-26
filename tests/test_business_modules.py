@@ -41,9 +41,29 @@ async def test_product_crud_and_isolation(api, two_shops):
                          json={"sku": "X1", "title": "x", "price": -1})
     assert bad.status_code == 422
 
-    patched = await api.patch(f"/api/v1/products/{sku}", headers=auth(two_shops["S1"]),
-                              json={"price": 15.5, "status": "inactive"})
-    assert patched.json()["data"]["price"] == "15.5000"
+    # 整改后：售价修改必须走审批（202 返回 DRAFT 操作，不直接改数据）
+    submitted = await api.patch(f"/api/v1/products/{sku}", headers=auth(two_shops["S1"]),
+                                json={"price": 15.5})
+    assert submitted.status_code == 202
+    operation = submitted.json()["data"]
+    assert operation["status"] == "DRAFT"
+    assert operation["before_snapshot"]["price"] == "19.9000"
+    # 审批前数据不变
+    unchanged = await api.get(f"/api/v1/products/{sku}", headers=auth(two_shops["S1"]))
+    assert unchanged.json()["data"]["price"] == "19.9000"
+
+    op_id = operation["operation_id"]
+    await api.post(f"/api/v1/operations/{op_id}/submit", headers=auth(two_shops["S1"]),
+                   json={})
+    approved = await api.post(f"/api/v1/operations/{op_id}/approve",
+                              headers=auth(two_shops["S1"]))
+    assert approved.json()["data"]["result"] == "approved"
+    executed = await api.post(f"/api/v1/operations/{op_id}/execute",
+                              headers=auth(two_shops["S1"]))
+    assert executed.json()["data"]["result"] == "executed"
+    assert executed.json()["data"]["execution_target"] == "db"
+    after = await api.get(f"/api/v1/products/{sku}", headers=auth(two_shops["S1"]))
+    assert after.json()["data"]["price"] == "15.5000"
 
 
 # ---------------- orders ----------------

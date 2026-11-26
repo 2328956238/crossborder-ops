@@ -4,6 +4,8 @@ from __future__ import annotations
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..core.errors import NotFoundError, ValidationError
+from ..core.permissions import ensure_role
+from ..core.security import ShopContext
 from ..repositories import business as repo
 
 
@@ -22,7 +24,14 @@ async def list_inventory(session: AsyncSession, shop_id: str, *, low_only: bool 
                                                            low_only=low_only, limit=limit)]
 
 
-async def upsert(session: AsyncSession, shop_id: str, payload) -> dict:
+async def get(session: AsyncSession, shop_id: str, sku: str) -> dict | None:
+    row = await repo.get_inventory(session, shop_id, sku)
+    return None if row is None else _to_dict(row)
+
+
+async def upsert(session: AsyncSession, ctx: ShopContext, payload) -> dict:
+    ensure_role(ctx, "operator", "admin")
+    shop_id = ctx.shop_id
     if payload.reserved > payload.on_hand:
         raise ValidationError("reserved 不能大于 on_hand")
     row = await repo.get_inventory(session, shop_id, payload.sku)
@@ -41,7 +50,9 @@ async def upsert(session: AsyncSession, shop_id: str, payload) -> dict:
     return _to_dict(row)
 
 
-async def adjust(session: AsyncSession, shop_id: str, sku: str, payload) -> dict:
+async def adjust(session: AsyncSession, ctx: ShopContext, sku: str, payload) -> dict:
+    ensure_role(ctx, "operator", "admin")
+    shop_id = ctx.shop_id
     row = await repo.get_inventory(session, shop_id, sku)
     if row is None:
         raise NotFoundError(f"库存记录不存在: {sku}")

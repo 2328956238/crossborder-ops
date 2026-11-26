@@ -72,12 +72,27 @@ alembic revision --autogenerate -m "..."   # 新增迁移
 
 生产环境 `AUTO_CREATE_TABLES=false`，只允许通过迁移变更 schema。
 
+## 4.1 权限、审批与审计（第一轮整改）
+
+角色：`viewer` 只读 / `operator` 业务写 + 提交审批 / `admin` 店铺授权 + 高风险审批。
+
+- 所有写接口都要求 operator 或 admin；写 Service 内部再校验一次角色（无法绕过 API 直接调 Service）。
+- 中高风险操作（改 Listing、改售价）必须走审批：`POST /api/v1/operations`（DRAFT）→ `submit`（PENDING）→ `approve/reject` → `execute`；
+  低风险写操作（建商品、库存调整、广告指标、Meta 同步）直接执行但全部审计。
+- 通用审计表 `audit_log`：actor/role/action/entity/before/after/request_id/operation_id/result/failure_reason；
+  敏感字段脱敏，成功与业务同事务、失败独立事务记录。
+- Webhook 使用 HMAC-SHA256 验签 + 时间戳防重放 + 店铺白名单，且**不再自动创建店铺**。
+
+详见 `docs/rectification-1.md`。
+
 ## 5. API（阶段 1）
 
 | 方法 | 路径 | 说明 |
 |---|---|---|
 | GET | `/healthz` `/readyz` `/metrics` | 健康检查 / 就绪 / Prometheus |
 | POST | `/webhook/amazon` | 平台事件（去重 + 订单防乱序） |
+| POST | `/api/v1/operations` | 提交审批（DRAFT，服务端读取 before 快照） |
+| POST | `/api/v1/operations/{id}/submit` | 提交为 PENDING |
 | GET | `/api/v1/operations` | 审批列表（shop 隔离） |
 | GET | `/api/v1/operations/{id}` | 操作详情 + 审计 |
 | POST | `/api/v1/operations/{id}/approve` | 审批（风险等级 → 角色） |
@@ -130,5 +145,5 @@ pytest -q
 | `docs/ad-shield-rules.md` | 广告盾规则表、阈值、去重、状态流转、不能得出的结论 |
 | `docs/phase1-report.md` ~ `docs/phase5-report.md` | 各阶段验收报告 |
 
-最终统计：`crossborder_ops/` 84 文件 / 5781 行，`tests/` 16 文件 / 1746 行，139 个测试全绿，
+最终统计：`crossborder_ops/` 92 文件 / 6657 行，`tests/` 17 文件 / 2203 行，**155 个测试全绿**，
 5 个 Alembic 迁移在真实 PostgreSQL 16 上验证通过（20 表 / 22 外键 / 58 索引）。

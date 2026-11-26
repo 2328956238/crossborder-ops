@@ -2,6 +2,8 @@
 
 - Base URL：`http://127.0.0.1:8000`
 - 认证：`Authorization: Bearer <token>`（token → `{shop_id, actor, role}` 由服务端映射）
+- 角色：`viewer` 只读；`operator` 业务写 + 提交审批；`admin` 店铺授权 + 高风险审批。写接口至少 operator。
+- 请求头 `X-Request-ID` 可透传，服务端也会生成；响应回带，审计用它关联请求。
 - **shop_id 只能来自认证上下文**，请求体/路径中的店铺必须与 token 一致，否则 403
 - 统一响应：成功 `{"ok": true, "data": ...}`；失败 `{"ok": false, "error": {"code", "message"}}`
 - 金额一律返回 4 位小数字符串（如 `"12.5000"`）；比例指标为小数（`0.25` 表示 25%）
@@ -19,8 +21,9 @@
 
 | 方法 | 路径 | 说明 |
 |---|---|---|
-| POST | `/webhook/amazon` | 平台事件；按 `(shop_id,event_id)` 去重；`ORDER_CHANGE` 防乱序 upsert |
+| POST | `/webhook/amazon` | 平台事件；HMAC 验签 + 时间戳防重放；只接受已注册店铺；按 `(shop_id,event_id)` 去重 |
 
+请求头：`X-Timestamp`（unix 秒）、`X-Signature: sha256=<hex(hmac_sha256(secret, f"{ts}.{raw_body}"))>`。
 请求体：`{shop_id, event_id, type, event_time, order_id?, status?}`（多余字段 422）。
 生产环境必须配置 `WEBHOOK_ALLOWED_SHOPS`；店铺白名单外的 `shop_id` 返回 403。
 
@@ -36,6 +39,8 @@ curl -X POST http://127.0.0.1:8000/webhook/amazon -H 'Content-Type: application/
 |---|---|---|
 | GET | `/api/v1/operations?status=&limit=` | 列表（shop 隔离） |
 | GET | `/api/v1/operations/{id}` | 详情 + 审计轨迹 |
+| POST | `/api/v1/operations` | 提交审批：`{action_type,target_id,after,idempotency_key,reason?,risk_level?}`，返回 DRAFT |
+| POST | `/api/v1/operations/{id}/submit` | DRAFT → PENDING |
 | POST | `/api/v1/operations/{id}/approve` | 审批（风险等级 → 角色：high 仅 admin） |
 | POST | `/api/v1/operations/{id}/reject` | 拒绝 |
 | POST | `/api/v1/operations/{id}/execute` | 执行（执行前重核旧值；UNKNOWN 不重试） |
