@@ -3,7 +3,8 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from sqlalchemy import JSON, DateTime, Index, String, Text, UniqueConstraint, func
+from sqlalchemy import (JSON, DateTime, ForeignKey, Index, String, Text,
+                        UniqueConstraint, func)
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .base import Base
@@ -24,7 +25,9 @@ class Operation(Base):
     )
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True)      # uuid，同时是执行幂等键
-    shop_id: Mapped[str] = mapped_column(String(64), nullable=False)
+    shop_id: Mapped[str] = mapped_column(String(64), ForeignKey("shops.id",
+                                                                  ondelete="CASCADE"),
+                                          nullable=False)
     agent_type: Mapped[str] = mapped_column(String(32), nullable=False)
     action_type: Mapped[str] = mapped_column(String(64), nullable=False)
     target_id: Mapped[str] = mapped_column(String(64), nullable=False)
@@ -47,7 +50,9 @@ class OperationAudit(Base):
     __table_args__ = (Index("ix_operation_audit_operation_id", "operation_id"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    operation_id: Mapped[str] = mapped_column(String(36), nullable=False)
+    operation_id: Mapped[str] = mapped_column(String(36), ForeignKey("operation.id",
+                                                                    ondelete="CASCADE"),
+                                              nullable=False)
     step: Mapped[str] = mapped_column(String(32), nullable=False)
     actor: Mapped[str] = mapped_column(String(64), nullable=False)
     result: Mapped[str] = mapped_column(String(16), nullable=False)

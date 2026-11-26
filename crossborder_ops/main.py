@@ -14,7 +14,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from . import __version__
-from .api.routers import amazon, health, operations, webhooks
+from .api.routers import (ad_shield, advertising, amazon, health, inventory, operations,
+                          orders, products, reports, shops, webhooks)
 from .config import get_settings
 from .core.errors import AppError
 from .db import dispose_engine, init_models
@@ -60,6 +61,14 @@ def create_app() -> FastAPI:
     app.include_router(webhooks.router)
     app.include_router(operations.router)
     app.include_router(amazon.router)
+    # 阶段 2 业务模块
+    app.include_router(shops.router)
+    app.include_router(products.router)
+    app.include_router(orders.router)
+    app.include_router(inventory.router)
+    app.include_router(advertising.router)
+    app.include_router(ad_shield.router)
+    app.include_router(reports.router)
 
     @app.exception_handler(AppError)
     async def app_error_handler(request: Request, exc: AppError):

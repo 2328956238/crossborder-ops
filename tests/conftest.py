@@ -40,6 +40,13 @@ async def sessionmaker_():
     from crossborder_ops.db import get_sessionmaker, init_models
 
     await init_models()
+    from crossborder_ops.repositories import business as repo
+
+    async with get_sessionmaker()() as session:
+        async with session.begin():
+            for shop_id in ("S1", "S2"):
+                if await repo.get_shop(session, shop_id) is None:
+                    await repo.create_shop(session, id=shop_id, name=f"shop-{shop_id}")
     return get_sessionmaker()
 
 

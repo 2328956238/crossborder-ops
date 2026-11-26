@@ -32,6 +32,7 @@ def get_engine() -> AsyncEngine:
             def _sqlite_pragma(dbapi_connection, _record):  # pragma: no cover
                 cursor = dbapi_connection.cursor()
                 cursor.execute("PRAGMA journal_mode=WAL")
+                cursor.execute("PRAGMA foreign_keys=ON")
                 cursor.close()
         else:
             _engine = create_async_engine(url, pool_pre_ping=True)
@@ -61,5 +62,11 @@ async def dispose_engine() -> None:
 
 
 async def get_session() -> AsyncIterator[AsyncSession]:
+    """请求级会话：成功提交、异常回滚。读接口提交空事务无副作用。"""
     async with get_sessionmaker()() as session:
-        yield session
+        try:
+            yield session
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise

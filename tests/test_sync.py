@@ -22,12 +22,15 @@ async def deliver(sm, event):
 
 async def test_concurrent_duplicate_only_stored_once(sessionmaker_):
     """同一事件并发投递 50 次，只入库一次。"""
-    e = ev("E1", "Pending", "2026-01-01T00:00:00+00:00")
+    eid = f"E-{uuid.uuid4().hex[:10]}"
+    order_id = f"O-{uuid.uuid4().hex[:10]}"
+    e = ev(eid, "Pending", "2026-01-01T00:00:00+00:00", order_id=order_id)
     results = await asyncio.gather(*[deliver(sessionmaker_, e) for _ in range(50)])
     assert results.count("ok") == 1
     assert results.count("duplicate") == 49
     async with sessionmaker_() as s:
-        n = (await s.execute(select(func.count()).select_from(PlatformEvent))).scalar_one()
+        n = (await s.execute(select(func.count()).select_from(PlatformEvent)
+                             .where(PlatformEvent.event_id == eid))).scalar_one()
     assert n == 1
 
 

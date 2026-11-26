@@ -52,3 +52,31 @@ def test_alembic_config_points_to_package_metadata():
     env_text = (ROOT / "alembic" / "env.py").read_text(encoding="utf-8")
     assert "crossborder_ops.models" in env_text
     assert "import hub" not in env_text
+
+
+def test_upgrade_over_phase1_existing_rows(tmp_path, monkeypatch):
+    """已有数据（阶段 1 的表 + 行）也能升级到最新：新列必须有默认值。"""
+    import sqlite3
+
+    from alembic import command
+    from alembic.config import Config
+
+    db_path = tmp_path / "legacy.db"
+    monkeypatch.setenv("ALEMBIC_DB_URL", f"sqlite+aiosqlite:///{db_path.as_posix()}")
+    config = Config(str(ROOT / "alembic.ini"))
+    config.set_main_option("script_location", str(ROOT / "alembic"))
+
+    command.upgrade(config, "5731fe8e390b")
+    conn = sqlite3.connect(db_path)
+    conn.execute("insert into shops (id,name,marketplace,currency,timezone,status) "
+                 "values ('S1','Shop','amazon','USD','UTC','active')")
+    conn.execute("insert into orders (shop_id,order_id,status,last_update_time,version) "
+                 "values ('S1','O-LEGACY','PENDING','2026-01-01T00:00:00+00:00',1)")
+    conn.commit()
+    conn.close()
+
+    command.upgrade(config, "head")
+    conn = sqlite3.connect(db_path)
+    row = conn.execute("select total_amount, currency from orders where order_id='O-LEGACY'").fetchone()
+    conn.close()
+    assert row == (0, "USD")

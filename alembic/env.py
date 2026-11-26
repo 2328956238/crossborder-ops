@@ -34,7 +34,7 @@ def _database_url() -> str:
 
 def _run_migrations(connection) -> None:
     context.configure(connection=connection, target_metadata=target_metadata,
-                      compare_type=True)
+                      compare_type=True, render_as_batch=True)
     with context.begin_transaction():
         context.run_migrations()
 
@@ -49,7 +49,7 @@ async def _run_async_migrations() -> None:
 def run_migrations_offline() -> None:
     context.configure(url=_database_url(), target_metadata=target_metadata,
                       literal_binds=True, dialect_opts={"paramstyle": "named"},
-                      compare_type=True)
+                      compare_type=True, render_as_batch=True)
     with context.begin_transaction():
         context.run_migrations()
 
